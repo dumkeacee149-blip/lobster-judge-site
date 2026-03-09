@@ -13,7 +13,7 @@
       <a href="#solutions">Solutions</a>
       <a href="#process">Process</a>
       <a href="#jurisdictions">Jurisdictions</a>
-      <button>Request Analysis</button>
+      <a href="#ask" class="btn-link">Request Analysis</a>
     </nav>
   </header>
 
@@ -23,8 +23,8 @@
       <h1>Judicial clarity for modern legal questions.</h1>
       <p class="lead">Lobster Judge converts legal uncertainty into structured action: Issue, Rule, Risk, and Next Steps — mapped to the right jurisdiction.</p>
       <div class="cta">
-        <button class="primary">Start Legal Review</button>
-        <button class="ghost">View Sample Opinions</button>
+        <a href="#ask" class="primary">Start Legal Review</a>
+        <a href="#sample" class="ghost">View Sample Opinions</a>
       </div>
     </div>
   </section>
@@ -51,10 +51,39 @@
     </div>
   </section>
 
+  <section class="section" id="ask">
+    <div class="inner">
+      <h2>Request Analysis</h2>
+      <div class="card">
+        <p class="lead">Enter a legal scenario and generate a structured advisory brief.</p>
+        <label>Question / Facts</label>
+        <textarea id="facts" style="width:100%;min-height:130px;background:#0f1420;border:1px solid #354156;color:#e8edf7;border-radius:10px;padding:10px" placeholder="Paste post, contract clause, or dispute facts..."></textarea>
+        <div class="timeline" style="margin-top:12px">
+          <div>
+            <label>Jurisdiction</label>
+            <select id="jurisdiction" style="width:100%;margin-top:6px;background:#0f1420;border:1px solid #354156;color:#e8edf7;border-radius:10px;padding:10px">
+              <option>US</option><option>UK</option><option>EU</option><option>HK</option><option>SG</option><option>CN</option>
+            </select>
+          </div>
+          <div>
+            <label>Matter Type</label>
+            <select id="matter" style="width:100%;margin-top:6px;background:#0f1420;border:1px solid #354156;color:#e8edf7;border-radius:10px;padding:10px">
+              <option>Platform Content / Defamation</option><option>Contract</option><option>IP</option><option>Compliance</option>
+            </select>
+          </div>
+          <div>
+            <label>&nbsp;</label>
+            <button id="generateBtn" class="primary" style="width:100%;margin-top:6px">Generate Legal Brief</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="section" id="sample">
     <div class="inner">
-      <h2>Advisory Sample</h2>
-      <div class="sample card">
+      <h2>Advisory Output</h2>
+      <div class="sample card" id="resultBox">
         <p><b>Issue</b> Potential defamation exposure from a cross-border post with commercial impact.</p>
         <p><b>Rule</b> Opinion-vs-fact tests, truth defenses, and intermediary protections vary by jurisdiction.</p>
         <p><b>Risk</b> <span class="risk">MEDIUM</span></p>
@@ -79,8 +108,26 @@
     <div class="inner">
       <h2>Request a Structured Legal Brief</h2>
       <p>Educational information only. Not legal advice. For representation, consult licensed counsel.</p>
-      <button class="primary">Request Analysis</button>
+      <a href="#ask" class="primary">Request Analysis</a>
     </div>
   </section>
+
+  <script>
+    const btn = document.getElementById('generateBtn');
+    btn?.addEventListener('click', () => {
+      const facts = document.getElementById('facts').value.trim() || 'A public allegation post with potential reputational impact.';
+      const j = document.getElementById('jurisdiction').value;
+      const m = document.getElementById('matter').value;
+      const risk = /fraud|criminal|extortion|leak|defamation/i.test(facts) ? 'HIGH' : (facts.length > 160 ? 'MEDIUM' : 'LOW');
+      const rule = `${j} analysis for ${m}: legal threshold depends on context, publication scope, provable harm, and available defenses.`;
+      document.getElementById('resultBox').innerHTML = `
+        <p><b>Issue</b> ${facts.slice(0, 180)}</p>
+        <p><b>Rule</b> ${rule}</p>
+        <p><b>Risk</b> <span class="risk">${risk}</span></p>
+        <p><b>Next 24h</b> Preserve evidence · avoid escalatory statements · prepare counsel-ready timeline.</p>
+      `;
+      document.getElementById('sample').scrollIntoView({behavior:'smooth'});
+    });
+  </script>
 </body>
 </html>
