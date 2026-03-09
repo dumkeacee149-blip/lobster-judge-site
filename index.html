@@ -95,11 +95,11 @@
   <section class="section alt" id="jurisdictions">
     <div class="inner">
       <h2>Jurisdictions & Practice Areas</h2>
-      <div class="chips">
-        <span>US</span><span>UK</span><span>EU</span><span>HK</span><span>SG</span><span>CN</span>
+      <div class="chips" id="jurisdictionChips">
+        <button class="chip-btn" data-j="US">US</button><button class="chip-btn" data-j="UK">UK</button><button class="chip-btn" data-j="EU">EU</button><button class="chip-btn" data-j="HK">HK</button><button class="chip-btn" data-j="SG">SG</button><button class="chip-btn" data-j="CN">CN</button>
       </div>
-      <div class="chips muted">
-        <span>Platform Liability</span><span>Defamation</span><span>Contract</span><span>IP</span><span>Compliance</span><span>Employment</span>
+      <div class="chips muted" id="matterChips">
+        <button class="chip-btn" data-m="Platform Content / Defamation">Platform Liability</button><button class="chip-btn" data-m="Platform Content / Defamation">Defamation</button><button class="chip-btn" data-m="Contract">Contract</button><button class="chip-btn" data-m="IP">IP</button><button class="chip-btn" data-m="Compliance">Compliance</button><button class="chip-btn" data-m="Compliance">Employment</button>
       </div>
     </div>
   </section>
@@ -114,10 +114,31 @@
 
   <script>
     const btn = document.getElementById('generateBtn');
+    const jurisdictionSelect = document.getElementById('jurisdiction');
+    const matterSelect = document.getElementById('matter');
+
+    document.querySelectorAll('#jurisdictionChips .chip-btn').forEach(el => {
+      el.addEventListener('click', () => {
+        document.querySelectorAll('#jurisdictionChips .chip-btn').forEach(x => x.classList.remove('active'));
+        el.classList.add('active');
+        jurisdictionSelect.value = el.dataset.j;
+        document.getElementById('ask').scrollIntoView({behavior:'smooth'});
+      });
+    });
+
+    document.querySelectorAll('#matterChips .chip-btn').forEach(el => {
+      el.addEventListener('click', () => {
+        document.querySelectorAll('#matterChips .chip-btn').forEach(x => x.classList.remove('active'));
+        el.classList.add('active');
+        if (el.dataset.m) matterSelect.value = el.dataset.m;
+        document.getElementById('ask').scrollIntoView({behavior:'smooth'});
+      });
+    });
+
     btn?.addEventListener('click', () => {
       const facts = document.getElementById('facts').value.trim() || 'A public allegation post with potential reputational impact.';
-      const j = document.getElementById('jurisdiction').value;
-      const m = document.getElementById('matter').value;
+      const j = jurisdictionSelect.value;
+      const m = matterSelect.value;
       const risk = /fraud|criminal|extortion|leak|defamation/i.test(facts) ? 'HIGH' : (facts.length > 160 ? 'MEDIUM' : 'LOW');
       const rule = `${j} analysis for ${m}: legal threshold depends on context, publication scope, provable harm, and available defenses.`;
       document.getElementById('resultBox').innerHTML = `
