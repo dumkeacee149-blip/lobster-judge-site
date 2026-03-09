@@ -116,6 +116,11 @@
     const btn = document.getElementById('generateBtn');
     const jurisdictionSelect = document.getElementById('jurisdiction');
     const matterSelect = document.getElementById('matter');
+    const KB = [
+      {jurisdiction:'US', matter:'Platform Content / Defamation', title:'US Defamation Basics', url:'https://www.law.cornell.edu/wex/defamation', content:'Defamation generally requires a false statement of fact, publication, fault, and damages; public-figure claims often require actual malice.'},
+      {jurisdiction:'CN', matter:'Platform Content / Defamation', title:'PRC Civil Code Personality Rights', url:'https://www.npc.gov.cn/englishnpc/c23934/202012/95f8d6b3f7e74b8bb20f2f6f232f6ca5.shtml', content:'Infringement of reputation rights may trigger cessation, apology, elimination of impact, and damages based on fault and harm.'},
+      {jurisdiction:'EU', matter:'Compliance', title:'EU Digital Services Act', url:'https://digital-strategy.ec.europa.eu/en/policies/digital-services-act-package', content:'The DSA sets due-diligence duties for online intermediaries, including transparency and notice-action obligations.'}
+    ];
 
     document.querySelectorAll('#jurisdictionChips .chip-btn').forEach(el => {
       el.addEventListener('click', () => {
@@ -135,18 +140,26 @@
       });
     });
 
-    btn?.addEventListener('click', () => {
+    btn?.addEventListener('click', async () => {
       const facts = document.getElementById('facts').value.trim() || 'A public allegation post with potential reputational impact.';
       const j = jurisdictionSelect.value;
       const m = matterSelect.value;
+
+      const hits = KB.filter(x => x.jurisdiction === j && x.matter === m);
+      const selected = (hits.length ? hits : KB.filter(x => x.jurisdiction === j)).slice(0,2);
       const risk = /fraud|criminal|extortion|leak|defamation/i.test(facts) ? 'HIGH' : (facts.length > 160 ? 'MEDIUM' : 'LOW');
-      const rule = `${j} analysis for ${m}: legal threshold depends on context, publication scope, provable harm, and available defenses.`;
+      const rule = selected.map(x=>x.content).join(' ').slice(0,420);
+      const src = selected.map(s => `<li><a href="${s.url}" target="_blank" style="color:#f0dcc0">${s.title}</a></li>`).join('');
+
       document.getElementById('resultBox').innerHTML = `
-        <p><b>Issue</b> ${facts.slice(0, 180)}</p>
+        <p><b>Issue</b> ${facts.slice(0,220)}</p>
         <p><b>Rule</b> ${rule}</p>
-        <p><b>Risk</b> <span class="risk">${risk}</span></p>
-        <p><b>Next 24h</b> Preserve evidence · avoid escalatory statements · prepare counsel-ready timeline.</p>
+        <p><b>Application</b> Under ${j} for ${m}, outcome depends on provable facts, publication scope, evidence quality, and available defenses.</p>
+        <p><b>Risk</b> <span class="risk">${risk}</span> · Confidence MEDIUM</p>
+        <p><b>Next 24h</b> Preserve evidence and timeline · Avoid escalatory statements · Escalate to licensed counsel if measurable harm appears</p>
+        <p><b>Sources</b></p><ul>${src}</ul>
       `;
+
       document.getElementById('sample').scrollIntoView({behavior:'smooth'});
     });
   </script>
